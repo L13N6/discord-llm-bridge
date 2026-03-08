@@ -52,6 +52,9 @@ curl -s -H "Authorization: USER_TOKEN" "https://discord.com/api/v9/channels/CHAN
 ## ⚠️ Security & Best Practices
 - **Token Safety**: Never hardcode Tokens in public scripts. Use environment variables or manual input.
 - **Human-like Behavior**: Always instruct the AI to use natural language (lowercase, casual, no bot-like emojis) to avoid being reported.
+- **Anti-Spam Rules (V1.1)**:
+  - **No Self-Reply**: The script is hardcoded to ignore messages from the user's own ID.
+  - **Context Limit**: Maximum of 2 consecutive replies to the same message context to prevent infinite loops and spam detection.
 
 ## ⚠️ Disclaimer
 **This project is experimental and for educational purposes only.** 
