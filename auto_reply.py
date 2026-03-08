@@ -35,7 +35,7 @@ def send_reply(message_id, reply_text):
         print(f"[-] Gagal kirim via bridge: {e}")
 
 if __name__ == "__main__":
-    print("[*] Abasuhuy AI Brain Aktif... Memantau Chat.")
+    print("[*] Discord AI Brain Active... Monitoring Chat.")
     last_msg_id = None
     
     while True:
