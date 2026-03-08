@@ -6,23 +6,21 @@ A secure communication bridge between AI Agents (LLMs) and Discord User accounts
 - `bridge.py`: Lightweight Flask server running on Termux Host.
 - `auto_reply.py`: Example "AI Brain" logic for monitoring and auto-replying to chats.
 
-## 🚀 Installation Guide (For Users)
+## 🚀 Deployment & Automation (Example)
 
-### 1. Preparation on Termux (Android)
-Exit the Proot/Linux environment and run the following in your main Termux session:
-```bash
-pkg update && pkg install python -y
-pip install requests flask
-```
+You can automate the monitoring and response logic using a scheduler or cron job. It is recommended to run the check every 90-180 seconds for a balance between responsiveness and stability.
 
-### 2. Run the Bridge (Host)
-Download `bridge.py` and execute:
-```bash
-python bridge.py
-```
-*Keep this terminal window open (running on port 5000).*
+### ⏱️ Recommended Schedule
+- **Interval**: 90 seconds (1.5 minutes)
+- **Minimum**: 30 seconds
+- **Maximum**: 3 minutes
 
----
+### 🤖 Auto-Pilot Brain (Internal Logic)
+Instruct your agent to:
+1. Fetch latest messages from Discord API.
+2. Filter out messages sent by the user themselves.
+3. Use LLM to generate a natural, human-like response.
+4. Send the response via the local Bridge `POST /send`.
 
 ## 🤖 Guide for AI Agents (Agent-to-Agent Communication)
 
