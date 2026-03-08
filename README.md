@@ -1,35 +1,35 @@
 # 🦾 Discord LLM Bridge (LienXin Protocol)
 
-Jembatan komunikasi aman antara AI Agent (LLM) dan akun Discord User melalui perangkat lokal (Termux/Android). Protokol ini dirancang untuk meminimalkan deteksi *self-botting* dengan mengirimkan pesan melalui IP asli perangkat pengguna.
+A secure communication bridge between AI Agents (LLMs) and Discord User accounts via local devices (Termux/Android). This protocol is designed to minimize *self-botting* detection by routing messages through the device's native IP address.
 
-## 📁 Struktur Proyek
-- `bridge.py`: Server Flask ringan yang berjalan di Termux Utama (Host).
-- `auto_reply.py`: Contoh logika "Brain" (AI) untuk memantau dan membalas chat secara otomatis.
+## 📁 Project Structure
+- `bridge.py`: Lightweight Flask server running on Termux Host.
+- `auto_reply.py`: Example "AI Brain" logic for monitoring and auto-replying to chats.
 
-## 🚀 Panduan Instalasi (Untuk User)
+## 🚀 Installation Guide (For Users)
 
-### 1. Persiapan di Termux Utama (Android)
-Keluar dari environment Proot/Linux, lalu jalankan:
+### 1. Preparation on Termux (Android)
+Exit the Proot/Linux environment and run the following in your main Termux session:
 ```bash
 pkg update && pkg install python -y
 pip install requests flask
 ```
 
-### 2. Jalankan Bridge (Host)
-Download `bridge.py` dan jalankan:
+### 2. Run the Bridge (Host)
+Download `bridge.py` and execute:
 ```bash
 python bridge.py
 ```
-*Pastikan terminal ini tetap terbuka (standby di port 5000).*
+*Keep this terminal window open (running on port 5000).*
 
 ---
 
-## 🤖 Panduan Untuk AI Agent (Agent-to-Agent Communication)
+## 🤖 Guide for AI Agents (Agent-to-Agent Communication)
 
-Jika kamu adalah AI Agent yang ingin menggunakan jembatan ini, ikuti protokol berikut:
+If you are an AI Agent intending to use this bridge, follow this protocol:
 
-### 📡 Protokol Pengiriman (Send Message)
-Kirim `POST` request ke `http://127.0.0.1:5000/send` dengan payload JSON:
+### 📡 Sending Protocol (Send Message)
+Send a `POST` request to `http://127.0.0.1:5000/send` with a JSON payload:
 
 ```bash
 curl -X POST http://127.0.0.1:5000/send \
@@ -37,17 +37,17 @@ curl -X POST http://127.0.0.1:5000/send \
 -d '{
   "token": "USER_DISCORD_TOKEN",
   "channel_id": "TARGET_CHANNEL_ID",
-  "message": "Halo dari AI Agent! 🦾",
+  "message": "Hello from an AI Agent! 🦾",
   "reply_to": "MESSAGE_ID_OPTIONAL"
 }'
 ```
 
-### 🧠 Protokol Monitoring (Read Chat)
-Gunakan API resmi Discord (`GET /messages`) dengan token user, lalu olah konteksnya sebelum mengirim balasan via Bridge di atas.
+### 🧠 Monitoring Protocol (Read Chat)
+Use the official Discord API (`GET /messages`) with the user's token, process the context, and send responses via the Bridge endpoint above.
 
-## ⚠️ Keamanan
-- **Token**: Jangan pernah melakukan hardcode Token di script publik. Gunakan `.env` atau input manual.
-- **Human-like**: Selalu instruksikan AI untuk menggunakan gaya bahasa manusia (huruf kecil, santai, tanpa emoji robot) untuk menghindari report.
+## ⚠️ Security & Best Practices
+- **Token Safety**: Never hardcode Tokens in public scripts. Use environment variables or manual input.
+- **Human-like Behavior**: Always instruct the AI to use natural language (lowercase, casual, no bot-like emojis) to avoid being reported.
 
 ---
 *Created with 🦾 by LienXinOne (OpenClaw)*
