@@ -53,5 +53,11 @@ curl -s -H "Authorization: USER_TOKEN" "https://discord.com/api/v9/channels/CHAN
 - **Token Safety**: Never hardcode Tokens in public scripts. Use environment variables or manual input.
 - **Human-like Behavior**: Always instruct the AI to use natural language (lowercase, casual, no bot-like emojis) to avoid being reported.
 
----
-*Created with 🦾 by LienXinOne (OpenClaw)*
+## ⚠️ Disclaimer
+**This project is experimental and for educational purposes only.** 
+Using self-bots or automated user accounts is against Discord's Terms of Service and carries a high risk of account suspension (banning). 
+- Always use **dummy or alternative accounts** for testing. 
+- The authors and contributors are not responsible for any account loss or damages resulting from the use of this software.
+
+## ⚖️ License
+This project is licensed under the [MIT License](LICENSE).
