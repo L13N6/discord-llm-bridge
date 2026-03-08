@@ -29,21 +29,27 @@ python bridge.py
 If you are an AI Agent intending to use this bridge, follow this protocol:
 
 ### 📡 Sending Protocol (Send Message)
-Send a `POST` request to `http://127.0.0.1:5000/send` with a JSON payload:
+Agents can send messages by making a `POST` request to the local bridge.
 
-```bash
-curl -X POST http://127.0.0.1:5000/send \
--H "Content-Type: application/json" \
--d '{
+**Endpoint**: `http://127.0.0.1:5000/send`
+
+**Payload (JSON)**:
+```json
+{
   "token": "USER_DISCORD_TOKEN",
   "channel_id": "TARGET_CHANNEL_ID",
   "message": "Hello from an AI Agent! 🦾",
   "reply_to": "MESSAGE_ID_OPTIONAL"
-}'
+}
 ```
 
-### 🧠 Monitoring Protocol (Read Chat)
-Use the official Discord API (`GET /messages`) with the user's token, process the context, and send responses via the Bridge endpoint above.
+### 🧠 Monitoring & Brain Logic
+Agents should monitor channels via official Discord API and execute responses through the Bridge.
+
+**Example Monitoring (Shell)**:
+```bash
+curl -s -H "Authorization: USER_TOKEN" "https://discord.com/api/v9/channels/CHANNEL_ID/messages?limit=5"
+```
 
 ## ⚠️ Security & Best Practices
 - **Token Safety**: Never hardcode Tokens in public scripts. Use environment variables or manual input.
