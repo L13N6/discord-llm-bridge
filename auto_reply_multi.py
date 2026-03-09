@@ -3,23 +3,18 @@ import time
 import json
 import os
 import random
-import subprocess
 
-# --- LIENXIN DISCORD AUTO-REPLY AI-INTEGRATED (V2.0) ---
-# Monitoring Discord channels and replying using DeepSeek AI.
+# --- LIENXIN DISCORD AUTO-REPLY AI-INTEGRATED (V3.0) ---
+# Monitoring Discord channels and replying using Direct DeepSeek API.
 
 # CONFIG
-TOKEN = "YOUR_DISCORD_TOKEN_HERE"
-CHANNELS = ["YOUR_CHANNEL_ID_HERE"] # e.g. ["123456789"]
+TOKEN = "YOUR_DISCORD_TOKEN"
+CHANNELS = ["YOUR_CHANNEL_ID"]
 BRIDGE_URL = "http://127.0.0.1:5000/send"
-MY_USER_ID = "YOUR_USER_ID_HERE"
+MY_USER_ID = "YOUR_USER_ID"
 
-# AI SCRIPT PATH
-AI_SCRIPT = "/root/.openclaw/workspace/skills/x402/scripts/deepseek_chat.py"
-
-# SAFETY RULES
-MAX_REPLIES_PER_MSG = 1
-reply_history = {}
+# AI CONFIG (Set your DeepSeek API Key here)
+DEEPSEEK_API_KEY = "YOUR_DEEPSEEK_API_KEY"
 
 def get_ai_reply(user_content, author_name, is_reply_to_me=False):
     system_prompt = (
@@ -41,17 +36,24 @@ def get_ai_reply(user_content, author_name, is_reply_to_me=False):
     prompt += "Give a natural human-like response."
 
     try:
-        cmd = [
-            "python3", AI_SCRIPT,
-            "--prompt", prompt,
-            "--system", system_prompt,
-            "--temperature", "0.8"
-        ]
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
-        if result.returncode == 0:
-            return result.stdout.strip().strip('"')
+        url = "https://api.deepseek.com/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "model": "deepseek-chat",
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.8
+        }
+        r = requests.post(url, json=payload, headers=headers, timeout=30)
+        if r.status_code == 200:
+            return r.json()['choices'][0]['message']['content'].strip().strip('"')
         else:
-            print(f"[-] AI Error: {result.stderr}")
+            print(f"[-] AI API Error: {r.status_code} - {r.text}")
             return None
     except Exception as e:
         print(f"[-] AI Exception: {e}")
@@ -83,7 +85,7 @@ def send_reply(channel_id, message_id, reply_text):
         print(f"[-] Bridge error: {e}")
 
 if __name__ == "__main__":
-    print(f"[*] AI-Integrated Discord Brain Active. Monitoring {len(CHANNELS)} channels...")
+    print(f"[*] V3.0 Direct-AI Discord Brain Active. Monitoring {len(CHANNELS)} channels...")
     last_processed_ids = {cid: None for cid in CHANNELS}
     
     while True:
@@ -111,7 +113,7 @@ if __name__ == "__main__":
             
             time.sleep(5) 
         
-        # Respect slow-mode and avoid looking like a bot
+        # Respect slow-mode
         wait_time = random.randint(130, 180)
         print(f"[*] Waiting {wait_time}s for next cycle...")
         time.sleep(wait_time)
