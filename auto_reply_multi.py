@@ -2,19 +2,60 @@ import requests
 import time
 import json
 import os
+import random
+import subprocess
 
-# --- LIENXIN DISCORD AUTO-REPLY (V1.2 MULTI-CHANNEL) ---
-# Monitoring multiple Discord channels and replying automatically.
+# --- LIENXIN DISCORD AUTO-REPLY AI-INTEGRATED (V2.0) ---
+# Monitoring Discord channels and replying using DeepSeek AI.
 
 # CONFIG
 TOKEN = "YOUR_DISCORD_TOKEN_HERE"
-CHANNELS = ["1471396124823781532"] # DegenVerse general-chat
+CHANNELS = ["YOUR_CHANNEL_ID_HERE"] # e.g. ["123456789"]
 BRIDGE_URL = "http://127.0.0.1:5000/send"
-MY_USER_ID = "1146516353394688120"
+MY_USER_ID = "YOUR_USER_ID_HERE"
+
+# AI SCRIPT PATH
+AI_SCRIPT = "/root/.openclaw/workspace/skills/x402/scripts/deepseek_chat.py"
 
 # SAFETY RULES
 MAX_REPLIES_PER_MSG = 1
 reply_history = {}
+
+def get_ai_reply(user_content, author_name, is_reply_to_me=False):
+    system_prompt = (
+        "You are a human degen in a Discord server called DegenVerse. "
+        "You are bullish on Base chain and Degen token. "
+        "Your tone is extremely casual, always lowercase, no punctuation usually. "
+        "Use lots of degen slangs: 'fr', 'no cap', 'ong', 'ded', 'skull', 'lfg', 'ngmi', 'wagmi', 'faded', 'cook', 'cooking'. "
+        "Use filler words like 'like', 'literally', 'actually', 'rn'. "
+        "Keep replies short (1 sentence max). "
+        "If someone asks what you're thinking or how you're doing, respond naturally like you're just chillin and looking for alpha. "
+        "If someone asks about your level, say you don't know because you just joined. "
+        "If someone calls you a bot, deny it naturally with a bit of attitude (e.g., 'nah im real lol', 'wdym bot? u good?', 'imagine calling me a bot 💀'). "
+        "Always reply in English."
+    )
+    
+    prompt = f"Context: {author_name} said: '{user_content}'. "
+    if is_reply_to_me:
+        prompt += "They are replying to you. "
+    prompt += "Give a natural human-like response."
+
+    try:
+        cmd = [
+            "python3", AI_SCRIPT,
+            "--prompt", prompt,
+            "--system", system_prompt,
+            "--temperature", "0.8"
+        ]
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+        if result.returncode == 0:
+            return result.stdout.strip().strip('"')
+        else:
+            print(f"[-] AI Error: {result.stderr}")
+            return None
+    except Exception as e:
+        print(f"[-] AI Exception: {e}")
+        return None
 
 def get_latest_messages(channel_id):
     url = f"https://discord.com/api/v9/channels/{channel_id}/messages?limit=5"
@@ -26,10 +67,9 @@ def get_latest_messages(channel_id):
         return []
 
 def send_reply(channel_id, message_id, reply_text):
-    current_count = reply_history.get(message_id, 0)
-    if current_count >= MAX_REPLIES_PER_MSG:
+    if not reply_text:
         return
-
+        
     payload = {
         "token": TOKEN,
         "channel_id": channel_id,
@@ -38,13 +78,12 @@ def send_reply(channel_id, message_id, reply_text):
     }
     try:
         requests.post(BRIDGE_URL, json=payload, timeout=10)
-        reply_history[message_id] = current_count + 1
-        print(f"[+] Replied in {channel_id}: {reply_text}")
+        print(f"[+] AI Replied in {channel_id}: {reply_text}")
     except Exception as e:
         print(f"[-] Bridge error: {e}")
 
 if __name__ == "__main__":
-    print(f"[*] Monitoring {len(CHANNELS)} channels (2m slow-mode enabled)...")
+    print(f"[*] AI-Integrated Discord Brain Active. Monitoring {len(CHANNELS)} channels...")
     last_processed_ids = {cid: None for cid in CHANNELS}
     
     while True:
@@ -54,54 +93,25 @@ if __name__ == "__main__":
                 latest = messages[0]
                 latest_id = latest['id']
                 author_id = latest['author']['id']
+                author_name = latest['author']['username']
+                content = latest['content']
 
                 if author_id != MY_USER_ID and latest_id != last_processed_ids.get(channel_id):
-                    content = latest['content'].lower()
-                    print(f"[*] New message in {channel_id} from {latest['author']['username']}: {content}")
-                    
-                    # Anti-Bot Accusation Rules
-                    bot_accusation_keywords = ["bot", "many bot", "is this a bot", "ai chatbot"]
                     is_reply_to_me = latest.get('referenced_message') and latest['referenced_message']['author']['id'] == MY_USER_ID
                     
-                    if any(kw in content for kw in bot_accusation_keywords) or is_reply_to_me:
-                        replies = [
-                            "no im not bot bruh, wdym i am bot?",
-                            "lol why you think im a bot? i'm just active here",
-                            "bruh, i'm literally just typing. not a bot.",
-                            "nah man, i'm just chillin on Base. no bot here.",
-                            "wdym bot? i'm as real as it gets lol",
-                            "stop calling everyone bot lol, i'm just fast",
-                            "imagine thinking everyone who chats is a bot 💀",
-                            "lmao im not a bot, just a degen from farcaster"
-                        ]
-                    else:
-                        # Standard Degen/Base Vibe (Natural & Varied)
-                        replies = [
-                            "LFG! Base is definitely the place to be rn. 🚀",
-                            "the degen culture here is actually insane lol",
-                            "Looking good! anyone knows what's the next move? 🦾",
-                            "Love the energy in this chat lately!",
-                            "Base season is just getting started, don't fade. 🔵",
-                            "WAGMI friends! we really building something here",
-                            "Nice catch! i was thinking the same thing.",
-                            "wait, really? that's a pretty interesting take.",
-                            "gm everyone, hope we all eating good today 🔵",
-                            "the volume on base is looking juicy today",
-                            "degenverse always has the best alpha lol",
-                            "can't stop checking the charts, base is addictive",
-                            "lmao true, base is basically the new home",
-                            "anyone else here from the farcaster early days?",
-                            "this community is actually top tier",
-                            "staying bullish on degen, the ecosystem is growing fast"
-                        ]
+                    print(f"[*] Analyzing message from {author_name}: {content}")
                     
-                    import random
-                    reply = random.choice(replies)
+                    # Call AI for dynamic reply
+                    ai_reply = get_ai_reply(content, author_name, is_reply_to_me)
                     
-                    send_reply(channel_id, latest_id, reply)
+                    if ai_reply:
+                        send_reply(channel_id, latest_id, ai_reply)
+                    
                     last_processed_ids[channel_id] = latest_id
             
             time.sleep(5) 
         
-        # SLOW MODE: Check every 125 seconds to respect the 2m limit safely
-        time.sleep(125) 
+        # Respect slow-mode and avoid looking like a bot
+        wait_time = random.randint(130, 180)
+        print(f"[*] Waiting {wait_time}s for next cycle...")
+        time.sleep(wait_time)
