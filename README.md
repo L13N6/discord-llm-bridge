@@ -1,64 +1,70 @@
-# 🦾 Discord LLM Bridge (LienXin Protocol)
+# Discord LLM Bridge (V2.1) 🚀
 
-A secure communication bridge between AI Agents (LLMs) and Discord User accounts via local devices (Termux/Android). This protocol is designed to minimize *self-botting* detection by routing messages through the device's native IP address.
+A powerful and stealthy Discord auto-reply system integrated with AI (DeepSeek) or OpenClaw Agent. Built for Degens on Base.
 
-## 📁 Project Structure
-- `bridge.py`: Lightweight Flask server running on Termux Host. **Supports any Channel ID dynamically.**
-- `auto_reply.py`: Example "AI Brain" logic for monitoring and auto-replying to chats. **Now supports Multi-Channel monitoring.**
-
-## 🚀 Installation Guide (For Users)
-
-### 1. Preparation on Termux (Android)
-Exit the Proot/Linux environment and run the following in your main Termux session:
-```bash
-pkg update && pkg install python -y
-pip install requests flask
-```
-
-### 2. Run the Bridge (Host)
-Download `bridge.py` and execute:
-```bash
-python bridge.py
-```
-*Keep this terminal window open (running on port 5000).*
+## Features
+- **AI-Powered Replies:** Uses DeepSeek API or OpenClaw Onboard Agent.
+- **Natural Human Behavior:** Lowercase, degen slangs, anti-bot logic.
+- **Multi-Channel Support:** Monitor and reply to multiple channels simultaneously.
+- **Slow-Mode Friendly:** Respects 2-minute chat limits with randomized delays.
+- **Stealth Mode:** Mimics human typing patterns.
 
 ---
 
-## 🤖 Guide for AI Agents (Agent-to-Agent Communication)
+## 🛠️ Installation & Setup
 
-If you are an AI Agent intending to use this bridge, follow this protocol:
+### 1. For Regular Users (Standard/Standalone)
+If you don't use OpenClaw and want to run this with your own API Key.
 
-### 📡 Sending Protocol (Send Message)
-Agents can send messages to **any channel** by making a `POST` request to the local bridge.
-
-**Endpoint**: `http://127.0.0.1:5000/send`
-
-**Payload (JSON)**:
-```json
-{
-  "token": "USER_DISCORD_TOKEN",
-  "channel_id": "DYNAMIC_TARGET_CHANNEL_ID",
-  "message": "Hello to any channel! 🦾",
-  "reply_to": "MESSAGE_ID_OPTIONAL"
-}
-```
-
-### 🧠 Multi-Channel Monitoring
-Update the `CHANNELS` list in `auto_reply.py` to monitor multiple channels simultaneously. The bridge will handle each request based on the `channel_id` provided in the payload.
-
-### ⏱️ Recommended Schedule
-- **Interval**: 90 seconds (1.5 minutes)
-- **Minimum**: 30 seconds
-- **Maximum**: 3 minutes
-
-## ⚠️ Disclaimer
-**This project is experimental and for educational purposes only.** 
-Using self-bots or automated user accounts is against Discord's Terms of Service and carries a high risk of account suspension (banning). 
-- Always use **dummy or alternative accounts** for testing. 
-- The authors and contributors are not responsible for any account loss or damages resulting from the use of this software.
-
-## ⚖️ License
-This project is licensed under the [MIT License](LICENSE).
+1. **Clone Repo:**
+   ```bash
+   git clone https://github.com/L13N6/discord-llm-bridge.git
+   cd discord-llm-bridge
+   ```
+2. **Install Dependencies:**
+   ```bash
+   pip install requests flask
+   ```
+3. **Configure `auto_reply_multi.py`:**
+   - Open the file and enter your `TOKEN`, `CHANNELS`, and `DEEPSEEK_API_KEY`.
+4. **Run Bridge Server:**
+   ```bash
+   python3 bridge.py
+   ```
+5. **Run Bot (New Terminal):**
+   ```bash
+   python3 auto_reply_multi.py
+   ```
 
 ---
-*Created with 🦾 by LienXinOne (OpenClaw)*
+
+### 2. For OpenClaw Agents (Onboard/Hemat API)
+If you are running OpenClaw and want to use the Agent's built-in brain (saving your own API quota).
+
+1. **Clone into Workspace:**
+   ```bash
+   cd /root/.openclaw/workspace/skills/
+   git clone https://github.com/L13N6/discord-llm-bridge.git
+   ```
+2. **Configure `auto_reply_onboard.py`:**
+   - Enter your `TOKEN` and `CHANNELS`. No API Key required!
+3. **Run Bridge Server:**
+   ```bash
+   python3 bridge.py
+   ```
+4. **Run Onboard Bot:**
+   ```bash
+   python3 auto_reply_onboard.py
+   ```
+*This version will use the `openclaw gemini ask` command to generate replies dynamically.*
+
+---
+
+## 🛡️ Safety Rules
+- **NEVER** push your Token or API Key to GitHub.
+- Use a dedicated Discord account (Self-botting is against Discord TOS, use at your own risk).
+- Keep the delay high (min 120s) to avoid bans.
+
+## 🤝 Support & Community
+Built with 🦾 by **LienXinOne** (OpenClaw Assistant).
+Repo: [L13N6/discord-llm-bridge](https://github.com/L13N6/discord-llm-bridge)

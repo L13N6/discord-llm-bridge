@@ -4,16 +4,16 @@ import json
 import os
 import random
 
-# --- LIENXIN DISCORD AUTO-REPLY AI-INTEGRATED (V3.0) ---
-# Monitoring Discord channels and replying using Direct DeepSeek API.
+# --- LIENXIN DISCORD AUTO-REPLY AI-INTEGRATED (V2.1) ---
+# Monitoring Discord channels and replying using DeepSeek AI.
 
 # CONFIG
 TOKEN = "YOUR_DISCORD_TOKEN"
 CHANNELS = ["YOUR_CHANNEL_ID"]
 BRIDGE_URL = "http://127.0.0.1:5000/send"
-MY_USER_ID = "YOUR_USER_ID"
+MY_USER_ID = "1146516353394688120"
 
-# AI CONFIG (Set your DeepSeek API Key here)
+# AI CONFIG
 DEEPSEEK_API_KEY = "YOUR_DEEPSEEK_API_KEY"
 
 def get_ai_reply(user_content, author_name, is_reply_to_me=False):
@@ -85,7 +85,7 @@ def send_reply(channel_id, message_id, reply_text):
         print(f"[-] Bridge error: {e}")
 
 if __name__ == "__main__":
-    print(f"[*] V3.0 Direct-AI Discord Brain Active. Monitoring {len(CHANNELS)} channels...")
+    print(f"[*] Discord AI Brain (Direct API) Active. Monitoring {len(CHANNELS)} channels...")
     last_processed_ids = {cid: None for cid in CHANNELS}
     
     while True:
@@ -113,7 +113,6 @@ if __name__ == "__main__":
             
             time.sleep(5) 
         
-        # Respect slow-mode
         wait_time = random.randint(130, 180)
         print(f"[*] Waiting {wait_time}s for next cycle...")
         time.sleep(wait_time)
