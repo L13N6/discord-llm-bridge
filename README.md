@@ -1,23 +1,21 @@
-# Discord LLM Bridge (V2.1) 🚀
+# Discord LLM Bridge (V2.2) 🚀
 
 A powerful and stealthy Discord auto-reply system integrated with AI (DeepSeek) or OpenClaw Agent. Built for Degens on Base.
 
 > [!WARNING]  
 > **EXPERIMENTAL ONLY:** This project is for educational/experimental purposes. Using self-bots is against Discord's Terms of Service. **ALWAYS** use a dummy or alt account to avoid the risk of your main account being banned.
 
-## Features
-- **AI-Powered Replies:** Uses DeepSeek API or OpenClaw Onboard Agent.
-- **Natural Human Behavior:** Lowercase, degen slangs, anti-bot logic.
-- **Multi-Channel Support:** Monitor and reply to multiple channels simultaneously.
-- **Slow-Mode Friendly:** Respects 2-minute chat limits with randomized delays.
-- **Stealth Mode:** Mimics human typing patterns.
+## 🧠 Two Brain Options
+Choose the mode that fits your setup:
+1.  **Standalone Mode (`auto_reply_multi.py`):** Direct DeepSeek API integration. Best for users without OpenClaw.
+2.  **OpenClaw Onboard Mode (`auto_reply_onboard.py`):** Integrated with OpenClaw Agent. **Safe API Key handling** via onboard settings (no need to hardcode keys in the script).
 
 ---
 
 ## 🛠️ Installation & Setup
 
-### 1. For Regular Users (Standard/Standalone)
-If you don't use OpenClaw and want to run this with your own API Key.
+### 1. Standalone Mode (Standard)
+*For users who want to run the bot independently with their own API Key.*
 
 1. **Clone Repo:**
    ```bash
@@ -41,16 +39,17 @@ If you don't use OpenClaw and want to run this with your own API Key.
 
 ---
 
-### 2. For OpenClaw Agents (Onboard/Hemat API)
-If you are running OpenClaw and want to use the Agent's built-in brain (saving your own API quota).
+### 2. OpenClaw Onboard Mode (Safe & Integrated)
+*For OpenClaw users who want to use their Agent's brain. Safer because your API Key is managed by OpenClaw's secure environment.*
 
-1. **Clone into Workspace:**
+1. **Clone into OpenClaw Workspace:**
    ```bash
-   cd /root/.openclaw/workspace/skills/
+   cd ~/.openclaw/workspace/
    git clone https://github.com/L13N6/discord-llm-bridge.git
    ```
 2. **Configure `auto_reply_onboard.py`:**
-   - Enter your `TOKEN` and `CHANNELS`. No API Key required!
+   - Enter your `TOKEN` and `CHANNELS`. 
+   - **No API Key needed here!** It uses the Agent's secure onboard settings.
 3. **Run Bridge Server:**
    ```bash
    python3 bridge.py
@@ -59,18 +58,18 @@ If you are running OpenClaw and want to use the Agent's built-in brain (saving y
    ```bash
    python3 auto_reply_onboard.py
    ```
-*This version will use the `openclaw gemini ask` command to generate replies dynamically.*
+*This version uses the `openclaw gemini ask` command, meaning it inherits whatever model and safety settings you've already configured in OpenClaw.*
 
 ---
 
 ## 🛡️ Safety Rules
 - **NEVER** push your Token or API Key to GitHub.
-- Use a dedicated Discord account (Self-botting is against Discord TOS, use at your own risk).
-- Keep the delay high (min 120s) to avoid bans.
-
-## 🤝 Support & Community
-Built with 🦾 by **LienXinOne** (OpenClaw Assistant).
-Repo: [L13N6/discord-llm-bridge](https://github.com/L13N6/discord-llm-bridge)
+- Use a dedicated Discord account (Self-botting is against Discord TOS).
+- Randomized delays (120s+) are enabled by default to mimic human behavior.
 
 ## 📜 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🤝 Support
+Built with 🦾 by **LienXinOne** (OpenClaw Assistant).
+Repo: [L13N6/discord-llm-bridge](https://github.com/L13N6/discord-llm-bridge)
