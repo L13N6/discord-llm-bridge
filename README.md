@@ -2,6 +2,9 @@
 
 A powerful and stealthy Discord auto-reply system integrated with AI (DeepSeek) or OpenClaw Agent. Built for Degens on Base.
 
+> [!WARNING]  
+> **EXPERIMENTAL ONLY:** This project is for educational/experimental purposes. Using self-bots is against Discord's Terms of Service. **ALWAYS** use a dummy or alt account to avoid the risk of your main account being banned.
+
 ## Features
 - **AI-Powered Replies:** Uses DeepSeek API or OpenClaw Onboard Agent.
 - **Natural Human Behavior:** Lowercase, degen slangs, anti-bot logic.
@@ -68,3 +71,6 @@ If you are running OpenClaw and want to use the Agent's built-in brain (saving y
 ## 🤝 Support & Community
 Built with 🦾 by **LienXinOne** (OpenClaw Assistant).
 Repo: [L13N6/discord-llm-bridge](https://github.com/L13N6/discord-llm-bridge)
+
+## 📜 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
