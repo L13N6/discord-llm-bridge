@@ -7,13 +7,13 @@ import os
 # Monitoring multiple Discord channels and replying automatically.
 
 # CONFIG
-TOKEN = "YOUR_DISCORD_TOKEN"
-CHANNELS = ["CHANNEL_ID_1", "CHANNEL_ID_2", "CHANNEL_ID_3"] # Add your IDs here
+TOKEN = "YOUR_DISCORD_TOKEN_HERE"
+CHANNELS = ["1471396124823781532"] # DegenVerse general-chat
 BRIDGE_URL = "http://127.0.0.1:5000/send"
-MY_USER_ID = "YOUR_USER_ID"
+MY_USER_ID = "1146516353394688120"
 
 # SAFETY RULES
-MAX_REPLIES_PER_MSG = 2
+MAX_REPLIES_PER_MSG = 1
 reply_history = {}
 
 def get_latest_messages(channel_id):
@@ -44,7 +44,7 @@ def send_reply(channel_id, message_id, reply_text):
         print(f"[-] Bridge error: {e}")
 
 if __name__ == "__main__":
-    print(f"[*] Monitoring {len(CHANNELS)} channels...")
+    print(f"[*] Monitoring {len(CHANNELS)} channels (2m slow-mode enabled)...")
     last_processed_ids = {cid: None for cid in CHANNELS}
     
     while True:
@@ -56,10 +56,52 @@ if __name__ == "__main__":
                 author_id = latest['author']['id']
 
                 if author_id != MY_USER_ID and latest_id != last_processed_ids.get(channel_id):
-                    print(f"[*] New message in {channel_id} from {latest['author']['username']}: {latest['content']}")
-                    # AI Brain logic here...
+                    content = latest['content'].lower()
+                    print(f"[*] New message in {channel_id} from {latest['author']['username']}: {content}")
+                    
+                    # Anti-Bot Accusation Rules
+                    bot_accusation_keywords = ["bot", "many bot", "is this a bot", "ai chatbot"]
+                    is_reply_to_me = latest.get('referenced_message') and latest['referenced_message']['author']['id'] == MY_USER_ID
+                    
+                    if any(kw in content for kw in bot_accusation_keywords) or is_reply_to_me:
+                        replies = [
+                            "no im not bot bruh, wdym i am bot?",
+                            "lol why you think im a bot? i'm just active here",
+                            "bruh, i'm literally just typing. not a bot.",
+                            "nah man, i'm just chillin on Base. no bot here.",
+                            "wdym bot? i'm as real as it gets lol",
+                            "stop calling everyone bot lol, i'm just fast",
+                            "imagine thinking everyone who chats is a bot 💀",
+                            "lmao im not a bot, just a degen from farcaster"
+                        ]
+                    else:
+                        # Standard Degen/Base Vibe (Natural & Varied)
+                        replies = [
+                            "LFG! Base is definitely the place to be rn. 🚀",
+                            "the degen culture here is actually insane lol",
+                            "Looking good! anyone knows what's the next move? 🦾",
+                            "Love the energy in this chat lately!",
+                            "Base season is just getting started, don't fade. 🔵",
+                            "WAGMI friends! we really building something here",
+                            "Nice catch! i was thinking the same thing.",
+                            "wait, really? that's a pretty interesting take.",
+                            "gm everyone, hope we all eating good today 🔵",
+                            "the volume on base is looking juicy today",
+                            "degenverse always has the best alpha lol",
+                            "can't stop checking the charts, base is addictive",
+                            "lmao true, base is basically the new home",
+                            "anyone else here from the farcaster early days?",
+                            "this community is actually top tier",
+                            "staying bullish on degen, the ecosystem is growing fast"
+                        ]
+                    
+                    import random
+                    reply = random.choice(replies)
+                    
+                    send_reply(channel_id, latest_id, reply)
                     last_processed_ids[channel_id] = latest_id
             
-            time.sleep(2) # Short gap between channels to avoid rate limit
+            time.sleep(5) 
         
-        time.sleep(30) # Check cycle every 30s
+        # SLOW MODE: Check every 125 seconds to respect the 2m limit safely
+        time.sleep(125) 
