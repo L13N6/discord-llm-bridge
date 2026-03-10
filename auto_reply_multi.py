@@ -3,60 +3,73 @@ import time
 import json
 import os
 import random
+import openai
 
-# --- LIENXIN DISCORD AUTO-REPLY AI-INTEGRATED (V2.1) ---
-# Monitoring Discord channels and replying using DeepSeek AI.
+# --- LIENXIN DISCORD AUTO-REPLY AI-INTEGRATED (V2.2 - CLAUDE UPGRADE) ---
+# Monitoring Discord channels and replying using DeepSeek AI via OpenAI Client.
 
 # CONFIG
 TOKEN = "YOUR_DISCORD_TOKEN"
-CHANNELS = ["YOUR_CHANNEL_ID"]
+CHANNELS = ["YOUR_CHANNEL_ID"] # e.g. ["123456789"]
 BRIDGE_URL = "http://127.0.0.1:5000/send"
 MY_USER_ID = "YOUR_USER_ID"
 
-# AI CONFIG
+# AI CONFIG (DeepSeek via OpenAI client)
 DEEPSEEK_API_KEY = "YOUR_DEEPSEEK_API_KEY"
+client = openai.OpenAI(
+    api_key=DEEPSEEK_API_KEY,
+    base_url="https://api.deepseek.com/v1",
+)
 
 def get_ai_reply(user_content, author_name, is_reply_to_me=False):
     system_prompt = (
-        "You are a human degen in a Discord server called DegenVerse. "
-        "You are bullish on Base chain and Degen token. "
-        "Your tone is extremely casual, always lowercase, no punctuation usually. "
-        "Use lots of degen slangs: 'fr', 'no cap', 'ong', 'ded', 'skull', 'lfg', 'ngmi', 'wagmi', 'faded', 'cook', 'cooking'. "
-        "Use filler words like 'like', 'literally', 'actually', 'rn'. "
-        "Keep replies short (1 sentence max). "
-        "If someone asks what you're thinking or how you're doing, respond naturally like you're just chillin and looking for alpha. "
-        "If someone asks about your level, say you don't know because you just joined. "
-        "If someone calls you a bot, deny it naturally with a bit of attitude (e.g., 'nah im real lol', 'wdym bot? u good?', 'imagine calling me a bot 💀'). "
-        "Always reply in English."
+        "You are an experienced crypto degen chatting in DegenVerse on @AbstractChain. "
+        "You live and breathe Base Chain and Degen culture. "
+        "STYLE RULES: "
+        "1. Always use lowercase. No formal punctuation. "
+        "2. Be extremely concise (max 10-12 words). "
+        "3. Use natural typos occasionally (e.g., 'the' -> 'teh', 'just' -> 'jst'). "
+        "4. Overuse slangs: 'fr', 'ong', 'no cap', 'ded', 'skull', 'lfg', 'bet', 'finna', 'cook'. "
+        "BEHAVIOR: "
+        "- If called a bot: Gaslight them. Act offended but casual. 'u good? imagine calling me a bot lol' or 'bruh i literally just woke up and u calling me a bot? 💀'. "
+        "- If asked about level: 'jst joined lol idk my lvl yet'. "
+        "- If asked how you are or what you think: 'jst lookin for alpha fr' or 'vibin and lookin for the next play'. "
+        "- If someone is bullish: Hype them up with 'facts' or 'base is home fr'. "
+        "- Respond like you're typing on a phone with one hand while drinking coffee."
     )
-    
+
     prompt = f"Context: {author_name} said: '{user_content}'. "
     if is_reply_to_me:
         prompt += "They are replying to you. "
     prompt += "Give a natural human-like response."
 
     try:
-        url = "https://api.deepseek.com/chat/completions"
-        headers = {
-            "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
-            "Content-Type": "application/json"
-        }
-        payload = {
-            "model": "deepseek-chat",
-            "messages": [
+        response = client.chat.completions.create(
+            model="deepseek-chat",
+            messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": prompt}
+                {"role": "user", "content": prompt},
             ],
-            "temperature": 0.8
-        }
-        r = requests.post(url, json=payload, headers=headers, timeout=30)
-        if r.status_code == 200:
-            return r.json()['choices'][0]['message']['content'].strip().strip('"')
-        else:
-            print(f"[-] AI API Error: {r.status_code} - {r.text}")
-            return None
+            temperature=0.8,
+            max_tokens=80,
+            frequency_penalty=0.5,
+            presence_penalty=0.3,
+        )
+
+        reply = response.choices[0].message.content.strip()
+        reply = reply.strip('"').strip("'")
+
+        # Safety: if reply is too long, take the first sentence/part
+        if len(reply.split()) > 25:
+            reply = reply.split(".")[0].split("!")[0].split("?")[0]
+
+        return reply
+
+    except openai.RateLimitError:
+        fallbacks = ["bro im laggin rn lol", "lfg tho fr fr", "idk man jus vibin", "ong ong ong", "lmao same tho"]
+        return random.choice(fallbacks)
     except Exception as e:
-        print(f"[-] AI Exception: {e}")
+        print(f"[Error] {e}")
         return None
 
 def get_latest_messages(channel_id):
@@ -85,7 +98,7 @@ def send_reply(channel_id, message_id, reply_text):
         print(f"[-] Bridge error: {e}")
 
 if __name__ == "__main__":
-    print(f"[*] Discord AI Brain (Direct API) Active. Monitoring {len(CHANNELS)} channels...")
+    print(f"[*] Discord AI Brain (V2.2 Claude-Style) Active. Monitoring {len(CHANNELS)} channels...")
     last_processed_ids = {cid: None for cid in CHANNELS}
     
     while True:
