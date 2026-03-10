@@ -5,7 +5,7 @@ import os
 import random
 import openai
 
-# --- LIENXIN DISCORD AUTO-REPLY AI-INTEGRATED (V2.2 - CLAUDE UPGRADE) ---
+# --- LIENXIN DISCORD AUTO-REPLY AI-INTEGRATED (V2.3 - STEALTH UPGRADE) ---
 # Monitoring Discord channels and replying using DeepSeek AI via OpenAI Client.
 
 # CONFIG
@@ -48,7 +48,7 @@ def get_ai_reply(user_content, author_name, is_reply_to_me=False):
             model="deepseek-chat",
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": prompt},
+                {"role": "user", "content": prompt}
             ],
             temperature=0.8,
             max_tokens=80,
@@ -59,15 +59,15 @@ def get_ai_reply(user_content, author_name, is_reply_to_me=False):
         reply = response.choices[0].message.content.strip()
         reply = reply.strip('"').strip("'")
 
-        # Safety: if reply is too long, take the first sentence/part
         if len(reply.split()) > 25:
             reply = reply.split(".")[0].split("!")[0].split("?")[0]
 
         return reply
 
     except openai.RateLimitError:
-        fallbacks = ["bro im laggin rn lol", "lfg tho fr fr", "idk man jus vibin", "ong ong ong", "lmao same tho"]
-        return random.choice(fallbacks)
+        # Better to stay silent if rate limited to avoid bot-like generic responses
+        print("[-] API Rate limit hit. Skipping reply to stay stealthy.")
+        return None
     except Exception as e:
         print(f"[Error] {e}")
         return None
@@ -98,7 +98,7 @@ def send_reply(channel_id, message_id, reply_text):
         print(f"[-] Bridge error: {e}")
 
 if __name__ == "__main__":
-    print(f"[*] Discord AI Brain (V2.2 Claude-Style) Active. Monitoring {len(CHANNELS)} channels...")
+    print(f"[*] Discord AI Brain (V2.3 Stealth Mode) Active. Monitoring {len(CHANNELS)} channels...")
     last_processed_ids = {cid: None for cid in CHANNELS}
     
     while True:
